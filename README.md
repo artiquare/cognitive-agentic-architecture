@@ -67,27 +67,27 @@ These are the operational rules that shape how CEA behaves in practice:
 
 CAA defines five critical architectural layers in any cognitive agent system:
 
-1. **Context Layer**  
+1. [**Context Layer**](layers/01-context-layer.md)
    - Typed, structured, and versioned inputs  
    - Ontology-driven interpretation  
    - Short-term memory, long-term memory, and overlays  
 
-2. **Execution Layer**  
+2. (**Execution Layer**)(layers/02-execution-layer.md)
    - Tool contracts and typed APIs  
    - Prompt dispatching and behavior routing  
    - Retry, fallback, and tool orchestration  
 
-3. **State Layer**  
+3. [**State Layer**](layers/03-state-layer.md)
    - Structured, persistent agent state  
    - Checkpoints, diffing, and time-aware transitions  
    - Separation between model state and external system state  
 
-4. **Collaboration Layer**  
+4. [**Collaboration Layer**](layers/04-collaboration-layer.md)
    - Human-in-the-loop and on-the-loop support  
    - Role-specific UX callbacks  
    - Interrupt/resume workflows and audit logs  
 
-5. **Observability Layer**  
+5. [**Observability Layer**](layers/05-observability-layer.md)
    - Full trace capture and step introspection  
    - Evaluation hooks and runtime debugging  
    - Replayability and semantic metrics  
