@@ -3,7 +3,7 @@
 **Arti Agent Stack is built on the principles of Cognitive Agentic Architecture (CAA)** — a modular, observable, collaboration-first approach to intelligent system design.  
 This repo introduces the CAA philosophy, outlines its 5-layer architecture, and defines the 10 operational principles behind Arti's implementation.
 
----
+
 
 ## 🔷 Cognitive Agentic Architecture (CAA)
 
@@ -12,13 +12,54 @@ It defines what agentic systems *should* be: structured, semantic, observable, a
 
 In a world full of fragile demos and prompt loops, CAA sets the architectural foundation for scalable, production-grade AI systems.
 
----
+
 
 ## 🧩 Arti Agent Stack
 
 The **Arti Agent Stack** is our opinionated implementation of CAA — forged through real-world deployment in high-stakes environments.
 
 Built to survive the complexity of enterprise operations, Arti is not just a wrapper around LLM calls. It’s a full-stack execution environment for cognitive agents, with first-class support for versioning, observability, and human oversight.
+
+
+## What’s Inside
+
+📐 **Architecture**  
+The 5-layer model of agentic systems built for scale and safety.
+
+- `layers.md` – Core CAA system layers  
+- `principles.md` – 10 foundational design principles  
+- `patterns.md` – Architecture patterns (e.g., MoE routing, interrupt-resume)
+
+🧱 **The 5 layers of Arti Agent Stack**  
+Concrete modules implementing each layer.
+
+- Context layer → semantic inputs, memory, context building  
+- Execution layer → behavior routing, tool interfaces  
+- State layer → explicit state contracts, persistence  
+- Collaboration layer → HITL/HOTL workflows  
+- Observability layer → tracing, replay, evaluation hooks
+
+**The 10 Principles of the Arti Agent Stack**
+These are the operational rules that shape how CEA behaves in practice:
+
+- Agent = Fancy Function w/ Side Effects
+- Prompt = Versioned Behavior Module
+- Context = Typed, Structured Inputs
+- Memory = Scoped and Addressable
+- Tools = Clear Intent, Predictable Behavior
+- State = Typed, Structured, & Persistent
+- Execution = Controlled, Observable, Replayable
+- Collaboration = First-Class Interface Layer
+- Error Handling = Composable, Runtime-aware
+
+
+## Key Concepts
+
+- **Execution-first AI** – Not chatbots. Not search. Agents that do.
+- **Typed prompts and context** – No raw string stitching.
+- **Composable behaviors** – One agent, one responsibility.
+- **Separation of concerns** – Prompting ≠ tooling ≠ state.
+- **Observability by design** – Trace every decision and step.
 
 ---
 
@@ -51,7 +92,7 @@ CAA defines five critical architectural layers in any cognitive agent system:
    - Evaluation hooks and runtime debugging  
    - Replayability and semantic metrics  
 
----
+
 
 ## 🔟 10 Principles of the Arti Agent Stack
 
@@ -88,7 +129,7 @@ These are the design rules that make the Arti Stack robust, modular, and product
 10. **Human Collaboration by Design**  
    - Support interruption, supervision, review, and override from the start.
 
----
+
 
 ## 📍 Coming Soon
 
@@ -96,7 +137,7 @@ These are the design rules that make the Arti Stack robust, modular, and product
 - Examples of Arti agents in production use cases
 - A lightweight reference implementation
 
----
+
 
 ## 🚀 Why This Matters
 
@@ -105,6 +146,6 @@ CAA and Arti aim higher — turning agents from toys into systems.
 
 If you're building agents that need to survive contact with reality, start here.
 
----
+
 
 **Let’s build the cognitive layer for enterprise AI.**
