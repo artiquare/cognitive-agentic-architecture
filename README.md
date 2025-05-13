@@ -98,35 +98,35 @@ CAA defines five critical architectural layers in any cognitive agent system:
 
 These are the design rules that make the Arti Stack robust, modular, and production-ready:
 
-1. **Small, Focused Agents**  
+1. [**Small, Focused Agents**](principles/01-small-focused-agents.md)  
    - One agent, one responsibility. Scope tightly.
 
-2. **Separation of Concerns**  
+2. [**Separation of Concerns**](principles/02-sparation-of-concerns.md)
    - Divide prompting, tool logic, memory, context, and execution.  
    - No monoliths. No entangled loops.
 
-3. **Explicit Control Flow**  
+3. [**Explicit Control Flow**](principles/03-explicit-control-flow)
    - Execution should be defined, inspectable, and testable — not inferred.
 
-4. **Structured Context**  
+4. [**Structured Context**](principles/04-structured-context.md)
    - No string soup. Use typed, versioned context builders.
 
-5. **Prompt = Code**  
+5. [**Prompt = Code**](principles/05-prompt-management.md)
    - Prompts are versioned, parameterized, testable, and fallback-safe.
 
-6. **Tools as Contracts**  
+6. [**Tools as Contracts**](principles/06-tools-as-contracts.md)
    - Tools have typed interfaces, clear intent, and predictable side effects.
 
-7. **Observable Everything**  
+7. [**Observable Everything**](principles/07-observable-everything.md)
    - Every agent step must be traced, debugged, and explainable.
 
-8. **State is Explicit**  
+8. [**State is Explicit**](principles/08-state-is-explicit.md)
    - No loose dicts or memory blobs. Use structured, persistent agent state.
 
-9. **Composable Error Handling**  
+9. [**Composable Error Handling**](principles/09-composable-error-handling.md)
    - Treat failure like a system design concern. Retry, fallback, escalate.
 
-10. **Human Collaboration by Design**  
+10. [**Human Collaboration by Design**](principles/10-human-collaboration-by-design.md)
    - Support interruption, supervision, review, and override from the start.
 
 
