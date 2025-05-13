@@ -72,7 +72,7 @@ CAA defines five critical architectural layers in any cognitive agent system:
    - Ontology-driven interpretation  
    - Short-term memory, long-term memory, and overlays  
 
-2. (**Execution Layer**)(layers/02-execution-layer.md)
+2. [**Execution Layer**](layers/02-execution-layer.md)
    - Tool contracts and typed APIs  
    - Prompt dispatching and behavior routing  
    - Retry, fallback, and tool orchestration  
