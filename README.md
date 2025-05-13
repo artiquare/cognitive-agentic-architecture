@@ -148,4 +148,40 @@ If you're building agents that need to survive contact with reality, start here.
 
 
 
+---
+
+## 📖 Learn More
+
+**The Thinking Behind the Stack**  
+Read our [Philosophy](./philosophy.md) to understand the core principles behind CAA and how they evolved from real-world production challenges.
+
+**Deep Dive Blog Series**  
+We’re documenting our journey, lessons, and frameworks in a [multi-part blog series](https://www.artiquare.com/tag/ai-agent-frameworks/). Start with [“The Workforce Challenges in Complex & Technical Industries”](https://www.artiquare.com/ai-workforce-augmentation-workforce-challenges/) for the why — and follow the trail to the how.
+
+---
+
+
+
+## 🚀 Get Involved
+
+**Follow the Project**  
+We’re evolving the Arti Agent Stack and Cognitive Agentic Architecture in the open. Watch the repo to stay updated on new principles, design patterns, and implementation examples.
+
+**See It in Action**  
+We're using this stack to power real-world agentic systems in complex industrial environments. Demos and case studies coming soon — follow us on [LinkedIn](https://www.linkedin.com/company/artiquare) or check out [website](https://www.artiquare.com/) for updates.
+
+**Contribute or Collaborate**  
+Have thoughts, ideas, or real use cases to share? Open an issue, start a discussion, or reach out. We welcome contributors who care about building production-grade AI systems.
+To make the process as smooth as possible, please follow the guidelines [here](./CONTRIBUTIONS.md).
+
+**Why This Matters**  
+We’ve tested dozens of frameworks, shipped agent systems in production, and learned what works. This project distills that into a blueprint for real-world AI execution — not just chatbots and demos.
+
+
+
+> Cognitive Agentic Architecture is more than a pattern — it’s a movement toward intelligent, accountable systems. Build with us.
+
+
+
+
 **Let’s build the cognitive layer for enterprise AI.**
