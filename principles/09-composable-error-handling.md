@@ -1,54 +1,78 @@
-# Principle 9: Composable Error Handling
+# Composable Error Handling
 
-Agentic systems operate in dynamic, unpredictable environments. Failures are inevitable. What distinguishes a production-grade system is not the absence of errors, but how gracefully and predictably it handles them.
+**Principle 9 of the Arti Agent Stack**
 
-### Why This Matters
+> Failures are inevitable.  Resilience is engineered.
 
-In real-world workflows, LLMs will:
+Agentic systems operate in dynamic, unpredictable environments.  What
+distinguishes a production‑grade system is **not the absence of errors, but how
+predictably it recovers from them.**
 
-* Misunderstand input
-* Misuse tools
-* Hit rate limits or timeouts
-* Fail to complete tasks due to ambiguity
+---
 
-Systems that treat failure as an exception instead of an expected path are brittle by design.
+## Why This Matters
 
-### The Principle
+LLMs will occasionally …
 
-> Handle failures like any software system.
-> Retry, fallback, escalate.
+* misunderstand input
+* misuse tools
+* hit rate‑limits or timeouts
+* stall on ambiguous tasks
 
-Every decision point in an agentic system should be:
+If failure‑paths are an after‑thought, the system becomes brittle and unsafe.
 
-* **Interruptible** – Can execution pause safely?
-* **Retryable** – Can failure trigger a repeat with modified parameters or context?
-* **Fallback-enabled** – Is there a simpler path if the main one fails?
-* **Escalatable** – Can a human or supervisor agent step in?
+---
 
-### Examples
+## Design Contract
 
-* **Tool Failure**: If a tool call times out, retry with exponential backoff. If still failing, use a simpler backup tool. If that fails, ask the user.
-* **LLM Uncertainty**: If the LLM returns low-confidence or non-parseable output, rerun with reduced temperature, or fall back to a deterministic step.
-* **Agent Confusion**: If the agent cannot determine the next step, route to a human or trigger an audit trail.
+* **Retryable**  – transient errors trigger bounded, observable retries.
+* **Fallback‑ready**  – alternate tools / simpler prompts are one hop away.
+* **Escalatable**  – a human or supervisor agent can be pulled in at any step.
+* **Typed errors**  – exceptions propagate as structured objects, not stray
+  strings.
 
-### Design Pattern
+```mermaid
+stateDiagram-v2
+    [*] --> StepA: normal flow
+    StepA --> StepB
+    StepB --> Success: ok
+    StepB --> RetryA: transient-fail / max 3
+    RetryA --> StepB
+    StepB --> Fallback: persistent‑fail
+    Fallback --> Escalate: if human_required
+    Escalate --> Success
+```
 
-Use middleware or decorators to wrap every critical function with:
+---
 
-* Retry logic
-* Error logging and tracing
-* Recovery path selection (fallback or human escalation)
+## Implementation Patterns
 
-Failures should be first-class citizens, not edge cases. Treat them as a natural branch in your control flow.
+| Pattern              | Use‑case                                 |
+| -------------------- | ---------------------------------------- |
+| **Decorator Retry**  | Idempotent API/tool calls                |
+| **Circuit Breaker**  | External services with unstable uptime   |
+| **Fallback Chain**   | Multiple tools achieving the same intent |
+| **Human Escalation** | Irreversible or high‑risk actions        |
 
-### Antipatterns
+> *Treat error handling like routing – composable, typed, and observable.*
 
-* Silent retries that hide failure symptoms
-* Nested try-catch blocks without structured error semantics
-* Blaming the LLM instead of designing for uncertainty
+---
 
-### Summary
+## Anti‑Patterns
 
-Error handling is not a band-aid — it’s a contract. If your agents can’t fail safely, they can’t scale.
+* Silent retries that mask systemic issues.
+* Nested `try/except` blocks swallowing context.
+* Letting the LLM decide its own error policy inside a prompt.
 
-> Design your agent stack like an operating system, not a toy demo. Every crash path must have a clear plan.
+---
+
+## Checklist
+
+* [ ] All critical tools wrapped with retry + timeout decorators.
+* [ ] Fallback path unit‑tested for primary tool failure.
+* [ ] Escalation channel configured (Slack, email, etc.).
+* [ ] Error objects logged with trace‑id for post‑mortem.
+
+---
+
+> "Design your agent stack like an operating system, not a toy demo."

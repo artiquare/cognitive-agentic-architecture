@@ -1,36 +1,61 @@
-# Principle: Explicit Control Flow
+# Explicit Control Flow
 
-## Summary
+> **Principle 3 – Make every step inspectable; no hidden loops.**
 
-Agent systems often obscure execution logic within opaque while-loops, recursive LLM calls, or inference-based decision trees. This makes them difficult to debug, extend, or trust. **Explicit control flow** means that your agent's logic is defined like any reliable software system — with clear branching, conditions, and transitions.
+Agentic systems become un‑debuggable when the *how* is buried inside LLM prompts or recursive `while` loops.
+CAA demands that the flow of execution is **declared, typed, and testable** – just like any other production workflow.
 
-## Core Concepts
+---
 
-* **No Hidden Loops:** Avoid architectures where the LLM repeatedly calls itself without explicit boundaries. Instead, loop logic should be defined in code or execution plans.
-* **Deterministic Steps:** Each step in the agent's flow should be deterministic, inspectable, and predictable. What happens next should be a product of system logic, not LLM guesswork.
-* **Clear Transitions:** If an agent moves from one phase to another (e.g. plan → search → synthesize), those transitions should be explicitly encoded and observable.
-* **No Implicit State Changes:** Avoid relying on prompt-wrapped memory or conversational flows to encode control logic. Use proper state machines, task plans, or orchestration engines.
+## Why It Matters
 
-## Implementation Strategies
+| Pain when flow is implicit                    | Benefit when flow is explicit         |
+| --------------------------------------------- | ------------------------------------- |
+| Infinite “think‑then‑act” loops               | Deterministic number of steps         |
+| Can’t unit‑test a prompt with hidden branches | Logic can be covered by unit tests    |
+| Hard to pinpoint failure root‑cause           | Each transition is logged & traceable |
+| "Where did it decide that?"                   | Clear plan → step → result lineage    |
 
-* Define workflows as **step functions**, **state machines**, or **directed graphs** that are readable and testable.
-* Use an **execution context object** to pass state across steps.
-* Design tools to **emit structured signals** (e.g., DONE, RETRY, ESCALATE) that inform next steps.
-* Keep LLM calls inside scoped modules with defined inputs/outputs.
+---
 
-## Benefits
+## Core Rules
 
-* **Predictability:** You always know what path the system is on.
-* **Testability:** You can write unit tests for specific paths.
-* **Debuggability:** You can trace how and why a specific result was reached.
-* **Trust:** Stakeholders can reason about system behavior — a must in enterprise or regulated environments.
+1. **No Hidden Loops**
+   ‑ LLMs do *not* call themselves recursively without an outer orchestration guard.
+2. **Deterministic Steps**
+   ‑ Each step is a function or tool call with typed I/O.
+3. **Typed Transitions**
+   ‑ Use an `ExecutionPlan` or state machine; transitions are data, not prose.
+4. **No Implicit State Mutation**
+   ‑ Memory/state changes are explicit events captured by the State layer.
 
-## Common Pitfalls
+---
 
-* Wrapping loops inside LLM prompts: "What should I do next?" repeated until the agent decides it's done.
-* Letting the LLM control its own retries or escalation without system guardrails.
-* Not separating planning from execution — mixing tool selection and state transitions into a single LLM step.
+## Implementation Patterns
 
-## Final Note
+* **State Machine** – e.g. XState, AWS Step Functions‑like JSON, or custom enum‐based reducer.
+* **Directed Graph** – Nodes = steps, Edges = typed transitions (`on_success`, `on_failure`).
+* **Declarative DSL** – YAML/JSON plan emitted by planner LLM, validated before execution.
 
-If your agent architecture resembles a black box — or worse, a loop with a prayer — it’s not production-grade. **Make execution explicit.** That’s how software scales.
+```mermaid
+stateDiagram-v2
+    [*] --> Plan
+    Plan --> ActionA : on_success
+    Plan --> Fallback : on_failure
+    ActionA --> Done : on_success
+    ActionA --> Fallback : on_failure
+```
+
+---
+
+## Production Checklist
+
+* [ ] Flow specification stored in VCS and version‑tagged.
+* [ ] Max‑step / timeout guards.
+* [ ] Unit tests cover happy‑ and error‑paths.
+* [ ] Trace IDs propagate through every transition.
+
+---
+
+> *"A prompt that decides its own next step is a speculation.
+> A system that declares its next step is software."*
