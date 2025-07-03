@@ -4,6 +4,8 @@ CAA is a blueprint for production-grade agentic systems. It defines a logical st
 
 (Insert a high-level architectural diagram here. Show the layers as a stack and the data flow between them.)
 
+Context → Behavior → Execution → State → Collab + Obs.
+
 ## The 5-Layer Stack
 
 CAA is composed of five sequential layers and one cross-cutting concern. A request flows through the stack, being transformed at each stage.
