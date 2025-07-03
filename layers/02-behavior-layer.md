@@ -24,9 +24,16 @@ The Behavior layer transforms a fully–typed **`ContextObject`** into an explic
 | **Out** `ExecutionPlan` | Pydantic / dataclass | Layer 3 (Execution)  |
 
 ```mermaid
-flowchart LR
-    C(Context Object) -->|plan()| B(Behavior / Planner)
-    B -->|ExecutionPlan| E(Execution Layer)
+graph LR
+    subgraph Inputs
+        C(Context Layer) -- "ContextObject" --> B[Behavior Layer];
+        COL(Collaboration Layer) -- "Human Feedback" --> B;
+    end
+
+    subgraph Outputs
+        B -- "ExecutionPlan" --> E(Execution Layer);
+        B -- "Trace" --> O((Observability));
+    end
 ```
 
 ### ExecutionPlan

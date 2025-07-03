@@ -2,7 +2,37 @@
 
 CAA is a blueprint for production-grade agentic systems. It defines a logical stack where each layer has a clear role and a defined interface, ensuring separation of concerns, observability, and reliability.
 
-(Insert a high-level architectural diagram here. Show the layers as a stack and the data flow between them.)
+```mermaid
+graph TD
+    subgraph "CAA Thought Cycle"
+        direction LR
+
+        START(External Input / Event) --> C[Context Layer];
+
+        subgraph "Core Agent Loop"
+            direction TB
+            C -- "ContextObject" --> B[Behavior Layer];
+            B -- "ExecutionPlan" --> E[Execution Layer];
+            E -- "StateChange" --> S[State Layer];
+        end
+
+        S -- "StateSnapshot" --> C;
+        S -- "StateSnapshot" --> COL[Collaboration Layer];
+
+        E -- "Execution Events" --> COL;
+
+        COL -- "Human Feedback / Approval" --> B;
+        COL -- "Human Override" --> E;
+
+        subgraph "Telemetry Bus"
+          C -- "Trace" --> O((Observability));
+          B -- "Trace" --> O;
+          E -- "Trace" --> O;
+          S -- "Trace" --> O;
+          COL -- "Trace" --> O;
+        end
+    end
+```
 
 Context → Behavior → Execution → State → Collab + Obs.
 

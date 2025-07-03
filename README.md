@@ -40,29 +40,19 @@ If you're building agents that need to survive contact with reality, start here.
 - **Observability by design** – Trace every decision and step.
 
 ---
+## 🏗️ The CAA Architectural Stack
 
-## 🏗️ The 6 Layers of Agentic Systems
+CAA is not just a list of ideas; it's a structured, 5-layer stack designed for production realities. Each layer has a distinct responsibility, ensuring a clear separation of concerns.
 
-CAA defines five critical architectural layers in any cognitive agent system:
+*   [**Layer 1: Context**](./layers/01-context-layer.md) - Transforms raw data into a structured understanding, so the AI acts with full context, not guesswork.
+*   [**Layer 2: Behavior**](./layers/02-behavior-layer.md) - The "planner" that decides *what* to do next, creating an explicit, inspectable execution plan.
+*   [**Layer 3: Execution**](./layers/03-execution-layer.md) - The "engine room" that reliably performs the actions and calls the tools defined in the plan.
+*   [**Layer 4: State**](./layers/04-state-layer.md)** - The persistent memory that tracks the agent's progress and enables multi-step, resumable workflows.
+*   [**Layer 5: Collaboration**](./layers/05-collaboration-layer.md)** - The interface that puts humans in the loop for approvals, oversight, and safe operations.
 
-1. [**Context Layer**](layers/01-context-layer.md) (The "Agent's Brain")
-- Context layer → semantic inputs, memory, context building 
+Plus, a cross-cutting concern that touches every layer:
 
-2. [**Behavior Layer**](layers/02-behavior-layer.md) (The "Control Tower")
-- Behavior layer → plan, next actions, checks
-
-3. [**Execution Layer**](layers/03-execution-layer.md) (The "Engine Room")
-- Execution layer → behavior routing, tool interfaces 
-
-4. [**State Layer**](layers/04-state-layer.md) (The "System Memory")
-- State layer → explicit state contracts, persistence  
-
-5. [**Collaboration Layer**](layers/05-collaboration-layer.md) (The "Human Interface")
-- Collaboration layer → HITL/HOTL workflows  
-
-6. [**Observability Layer**](layers/06-observability-layer.md) (The "Control Tower")
-- Observability layer → tracing, replay, evaluation hooks
-
+*   [**The Observability Bus**](./layers/06-observability-layer.md) - Provides the full tracing, metrics, and debugging capabilities required to trust the system in production.
 
 
 ## 🔷 Cognitive Agentic Architecture (CAA)
