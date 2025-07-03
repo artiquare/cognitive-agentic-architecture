@@ -4,6 +4,13 @@
 
 State is the backbone of agentic systems — it must be persistent, structured, and explicitly defined. Unlike traditional approaches where state is often hidden in fragile dictionaries or buried in memory blobs, the Cognitive Agentic Architecture mandates clear and testable state transitions.
 
+- **Purpose**: To manage and persist the agent's understanding of the world and its own progress. It sits directly on top of the Execution Layer.
+- **Components**: Structured state contracts, persistent memory (short-term & long-term), checkpointing, and transaction management.
+- **Principle Embodied**: State is Explicit, Memory is Scoped.
+- Structured, persistent agent state  
+- Checkpoints, diffing, and time-aware transitions  
+- Separation between model state and external system state  
+
 ## Key Characteristics
 
 ### 🧠 Persistent, Structured Internal State

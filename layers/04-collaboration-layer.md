@@ -4,6 +4,13 @@
 
 Real-world systems are not autonomous by default—they’re collaborative. The Collaboration Layer is where agents are designed to work *with* humans, not around them. It's not about fallback—it’s foundational.
 
+- **Purpose**: The top-level interface that allows humans to interact with, supervise, and override the system.
+- **Components**: Human-in-the-loop/on-the-loop workflows, role-specific UX callbacks, interrupt/resume commands, audit logs.
+- **Principle Embodied**: Human Collaboration by Design.
+- Human-in-the-loop and on-the-loop support  
+- Role-specific UX callbacks  
+- Interrupt/resume workflows and audit logs  
+
 ## Key Characteristics
 
 ### 🛑 Interrupt / Approve / Resume Hooks

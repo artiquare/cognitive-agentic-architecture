@@ -4,6 +4,13 @@
 
 The Execution Layer is where an agent’s behavior actually happens. It is the backbone of action within agentic systems, transforming structured inputs and defined context into observable outputs and outcomes — with full determinism and traceability.
 
+- **Purpose**: To interact with the outside world. This is the lowest level of the stack.
+- **Components**: Typed API wrappers for tools, secure LLM/LMM call handlers, external system interfaces.
+- **Principle Embodied**: Tools as Contracts, (Python) code execution.
+- Tool contracts and typed APIs  
+- Prompt dispatching and behavior routing  
+- Retry, fallback, and tool orchestration  
+
 ## Key Characteristics
 
 ### 🧩 Typed Tools and Interfaces

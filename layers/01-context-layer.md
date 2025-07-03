@@ -4,6 +4,13 @@
 
 Agentic systems begin with context—but not in the form of brittle prompt strings or ad hoc memory hacks. A robust context layer provides a structured, semantic, and versioned representation of all relevant information.
 
+- **Purpose**: This is the core logic layer where decisions are made. It consumes State and triggers Execution.
+- **Components**: Context builders (the "what am I looking at?"), behavior routing (the "what should I do next?"), prompt dispatching, task combination, and workflow logic (loops, conditions).
+- **Principle Embodied**: Small, Focused Agents, Explicit Control Flow, Prompt = Code.
+- Typed, structured, and versioned inputs  
+- Ontology-driven interpretation  
+- Short-term memory, long-term memory, and overlays  
+
 ## Core Responsibilities
 
 ### ✅ Typed Input Schemas

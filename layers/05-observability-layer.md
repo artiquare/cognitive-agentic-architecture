@@ -4,6 +4,13 @@
 
 You can’t trust what you can’t trace. The Observability & Evaluation Layer ensures every agent decision, action, and failure is inspectable — not just during development, but in real-world operations.
 
+- **Purpose**: A cross-cutting layer that provides insight into all other layers. It is not sequential but has hooks into Execution, State, and Behavior.
+- **Components**: Full trace capture, step introspection, evaluation hooks, runtime debugging, and semantic metrics.
+- **Principle Embodied**: Observable Everything, Composable Error Handling.
+- Full trace capture and step introspection  
+- Evaluation hooks and runtime debugging  
+- Replayability and semantic metrics  
+
 ## Key Characteristics
 
 ### 🔍 Step-by-Step Execution Traces
