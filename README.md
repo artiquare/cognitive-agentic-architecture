@@ -67,31 +67,45 @@ These are the operational rules that shape how CEA behaves in practice:
 
 CAA defines five critical architectural layers in any cognitive agent system:
 
-1. [**Context Layer**](layers/01-context-layer.md)
-   - Typed, structured, and versioned inputs  
-   - Ontology-driven interpretation  
-   - Short-term memory, long-term memory, and overlays  
-
-2. (**Execution Layer**)(layers/02-execution-layer.md)
+1. (**Execution Layer**)(layers/02-execution-layer.md) (The "Engine Room")
+   - **Purpose**: To interact with the outside world. This is the lowest level of the stack.
+   - **Components**: Typed API wrappers for tools, secure LLM/LMM call handlers, external system interfaces.
+   - **Principle Embodied**: Tools as Contracts, (Python) code execution.
    - Tool contracts and typed APIs  
    - Prompt dispatching and behavior routing  
    - Retry, fallback, and tool orchestration  
 
-3. [**State Layer**](layers/03-state-layer.md)
+2. [**State Layer**](layers/03-state-layer.md) (The "System Memory")
+   - **Purpose**: To manage and persist the agent's understanding of the world and its own progress. It sits directly on top of the Execution Layer.
+   - **Components**: Structured state contracts, persistent memory (short-term & long-term), checkpointing, and transaction management.
+   - **Principle Embodied**: State is Explicit, Memory is Scoped.
    - Structured, persistent agent state  
    - Checkpoints, diffing, and time-aware transitions  
    - Separation between model state and external system state  
 
-4. [**Collaboration Layer**](layers/04-collaboration-layer.md)
-   - Human-in-the-loop and on-the-loop support  
-   - Role-specific UX callbacks  
-   - Interrupt/resume workflows and audit logs  
+3. [**Context Layer**](layers/01-context-layer.md) (The "Agent's Brain")
+   - **Purpose**: This is the core logic layer where decisions are made. It consumes State and triggers Execution.
+   - **Components**: Context builders (the "what am I looking at?"), behavior routing (the "what should I do next?"), prompt dispatching, task combination, and workflow logic (loops, conditions).
+   - **Principle Embodied**: Small, Focused Agents, Explicit Control Flow, Prompt = Code.
+   - Typed, structured, and versioned inputs  
+   - Ontology-driven interpretation  
+   - Short-term memory, long-term memory, and overlays  
 
-5. [**Observability Layer**](layers/05-observability-layer.md)
+4. [**Observability Layer**](layers/05-observability-layer.md) (The "Control Tower")
+   - **Purpose**: A cross-cutting layer that provides insight into all other layers. It is not sequential but has hooks into Execution, State, and Behavior.
+   - **Components**: Full trace capture, step introspection, evaluation hooks, runtime debugging, and semantic metrics.
+   - **Principle Embodied**: Observable Everything, Composable Error Handling.
    - Full trace capture and step introspection  
    - Evaluation hooks and runtime debugging  
    - Replayability and semantic metrics  
 
+5. [**Collaboration Layer**](layers/04-collaboration-layer.md) (The "Human Interface")
+   - **Purpose**: The top-level interface that allows humans to interact with, supervise, and override the system.
+   - **Components**: Human-in-the-loop/on-the-loop workflows, role-specific UX callbacks, interrupt/resume commands, audit logs.
+   - **Principle Embodied**: Human Collaboration by Design.
+   - Human-in-the-loop and on-the-loop support  
+   - Role-specific UX callbacks  
+   - Interrupt/resume workflows and audit logs  
 
 
 ## 🔟 10 Principles of the Arti Agent Stack
