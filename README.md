@@ -3,56 +3,32 @@
 **Arti Agent Stack is built on the principles of Cognitive Agentic Architecture (CAA)** — a modular, observable, collaboration-first approach to intelligent system design.  
 This repo introduces the CAA philosophy, outlines its 5-layer architecture, and defines the 10 operational principles behind Arti's implementation.
 
-## 🔷 Cognitive Agentic Architecture (CAA)
+## 🚀 Why CAA?
+
+Chatbots answer questions. Enterprises need work done.  
+Most agent frameworks are brittle, opaque, and stuck in the demo phase.  
+CAA turns agents from toys into systems.
+
+CAA defines five layers that turn LLM reasoning into reliable execution.
 
 **CAA is a blueprint, not a framework.**  
-It defines what agentic systems *should* be: structured, semantic, observable, and designed for human-AI collaboration.
 
-In a world full of fragile demos and prompt loops, CAA sets the architectural foundation for scalable, production-grade AI systems.
+| Layer | Solves | Delivers |
+|-------|--------|----------|
+| **Context** | AI doesn’t get intent | Typed, versioned context |
+| **Execution** | Chats but no action | Deterministic workflows & tool calls |
+| **State** | AI forgets | Persistent, testable memory |
+| **Collaboration** | No trust / approvals | Human-in-loop hooks |
+| **Observability** | Opaque failures | Full tracing & metrics |
+
+If you're building agents that need to survive contact with reality, start here. We’ve tested dozens of frameworks, shipped agent systems in production, and learned what works. This project distills that into a blueprint for real-world AI execution — not just chatbots and demos.
+
 
 ## Who Is This For?
 
 *   **For Leaders & Product Managers:** Start with our [Product Overview](./product_overview.md) to understand the business value.
 *   **For Architects & Engineers:** Dive into the [CAA Architectural Stack](./architecture.md) for the technical deep dive.
-
-
-## 🧩 Arti Agent Stack
-
-The **Arti Agent Stack** is our opinionated implementation of CAA — forged through real-world deployment in high-stakes environments.
-
-Built to survive the complexity of enterprise operations, Arti is not just a wrapper around LLM calls. It’s a full-stack execution environment for cognitive agents, with first-class support for versioning, observability, and human oversight.
-
-
-## What’s Inside
-
-📐 **Architecture**  
-The 5-layer model of agentic systems built for scale and safety.
-
-- `layers.md` – Core CAA system layers  
-- `principles.md` – 10 foundational design principles  
-- `patterns.md` – Architecture patterns (e.g., MoE routing, interrupt-resume)
-
-🧱 **The 5 layers of Arti Agent Stack**  
-Concrete modules implementing each layer.
-
-- Context layer → semantic inputs, memory, context building  
-- Execution layer → behavior routing, tool interfaces  
-- State layer → explicit state contracts, persistence  
-- Collaboration layer → HITL/HOTL workflows  
-- Observability layer → tracing, replay, evaluation hooks
-
-**The 10 Principles of the Arti Agent Stack**
-These are the operational rules that shape how CEA behaves in practice:
-
-- Agent = Fancy Function w/ Side Effects
-- Prompt = Versioned Behavior Module
-- Context = Typed, Structured Inputs
-- Memory = Scoped and Addressable
-- Tools = Clear Intent, Predictable Behavior
-- State = Typed, Structured, & Persistent
-- Execution = Controlled, Observable, Replayable
-- Collaboration = First-Class Interface Layer
-- Error Handling = Composable, Runtime-aware
+*   **For the Curious Reader:** Check the [Philosophy](./philosophy.md) to understand the motivation & background.
 
 
 ## Key Concepts
@@ -65,19 +41,43 @@ These are the operational rules that shape how CEA behaves in practice:
 
 ---
 
-## 🏗️ The 5 Layers of Agentic Systems
+## 🏗️ The 6 Layers of Agentic Systems
 
 CAA defines five critical architectural layers in any cognitive agent system:
 
-1. (**Execution Layer**)(layers/02-execution-layer.md) (The "Engine Room")
+1. [**Context Layer**](layers/01-context-layer.md) (The "Agent's Brain")
+- Context layer → semantic inputs, memory, context building 
 
-2. [**State Layer**](layers/03-state-layer.md) (The "System Memory")
+2. [**Behavior Layer**](layers/02-behavior-layer.md) (The "Control Tower")
+- Behavior layer → plan, next actions, checks
 
-3. [**Context Layer**](layers/01-context-layer.md) (The "Agent's Brain")
+3. [**Execution Layer**](layers/03-execution-layer.md) (The "Engine Room")
+- Execution layer → behavior routing, tool interfaces 
 
-4. [**Observability Layer**](layers/05-observability-layer.md) (The "Control Tower")
+4. [**State Layer**](layers/04-state-layer.md) (The "System Memory")
+- State layer → explicit state contracts, persistence  
 
-5. [**Collaboration Layer**](layers/04-collaboration-layer.md) (The "Human Interface")
+5. [**Collaboration Layer**](layers/05-collaboration-layer.md) (The "Human Interface")
+- Collaboration layer → HITL/HOTL workflows  
+
+6. [**Observability Layer**](layers/06-observability-layer.md) (The "Control Tower")
+- Observability layer → tracing, replay, evaluation hooks
+
+
+
+## 🔷 Cognitive Agentic Architecture (CAA)
+
+It defines what agentic systems *should* be: structured, semantic, observable, and designed for human-AI collaboration.
+
+In a world full of fragile demos and prompt loops, CAA sets the architectural foundation for scalable, production-grade AI systems.
+
+
+## 🧩 Arti Agent Stack
+
+The **Arti Agent Stack** is our opinionated implementation of CAA — forged through real-world deployment in high-stakes environments.
+
+Built to survive the complexity of enterprise operations, Arti is not just a wrapper around LLM calls. It’s a full-stack execution environment for cognitive agents, with first-class support for versioning, observability, and human oversight.
+
 
 
 ## 🔟 10 Principles of the Arti Agent Stack
@@ -91,7 +91,7 @@ These are the design rules that make the Arti Stack robust, modular, and product
    - Divide prompting, tool logic, memory, context, and execution.  
    - No monoliths. No entangled loops.
 
-3. [**Explicit Control Flow**](principles/03-explicit-control-flow)
+3. [**Explicit Control Flow**](principles/03-explicit-control-flow.md)
    - Execution should be defined, inspectable, and testable — not inferred.
 
 4. [**Structured Context**](principles/04-structured-context.md)
@@ -125,14 +125,6 @@ These are the design rules that make the Arti Stack robust, modular, and product
 
 
 
-## 🚀 Why This Matters
-
-Most agent frameworks today are brittle, opaque, and trapped in the demo phase.  
-CAA and Arti aim higher — turning agents from toys into systems.
-
-If you're building agents that need to survive contact with reality, start here.
-
-
 
 ---
 
@@ -158,10 +150,7 @@ We're using this stack to power real-world agentic systems in complex industrial
 
 **Contribute or Collaborate**  
 Have thoughts, ideas, or real use cases to share? Open an issue, start a discussion, or reach out. We welcome contributors who care about building production-grade AI systems.
-To make the process as smooth as possible, please follow the guidelines [here](./CONTRIBUTIONS.md).
-
-**Why This Matters**  
-We’ve tested dozens of frameworks, shipped agent systems in production, and learned what works. This project distills that into a blueprint for real-world AI execution — not just chatbots and demos.
+To make the process as smooth as possible, please follow the guidelines [here](./CONTRIBUTING.md).
 
 
 
