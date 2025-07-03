@@ -1,54 +1,76 @@
-# Collaboration Layer
+# Layer 5 – Collaboration / Human Interface
 
-**Layer 4 of the Arti Agent Stack: Cognitive Agentic Architecture**
+> **Mission ‑ Make cognitive agents safe, trusted, and usable by letting humans observe, intervene, and co‑create.**
 
-Real-world systems are not autonomous by default—they’re collaborative. The Collaboration Layer is where agents are designed to work *with* humans, not around them. It's not about fallback—it’s foundational.
+Even the best automation must earn its autonomy. The Collaboration layer bakes human‑in‑the‑loop (HITL) and human‑on‑the‑loop (HOTL) patterns into the core architecture – **not** as an after‑the‑fact fallback.
 
-- **Purpose**: The top-level interface that allows humans to interact with, supervise, and override the system.
-- **Components**: Human-in-the-loop/on-the-loop workflows, role-specific UX callbacks, interrupt/resume commands, audit logs.
-- **Principle Embodied**: Human Collaboration by Design.
-- Human-in-the-loop and on-the-loop support  
-- Role-specific UX callbacks  
-- Interrupt/resume workflows and audit logs  
+---
 
-## Key Characteristics
+## Why a dedicated Collaboration layer?
 
-### 🛑 Interrupt / Approve / Resume Hooks
+| Pain if ignored                                           | Benefit of an explicit layer                                    |
+| --------------------------------------------------------- | --------------------------------------------------------------- |
+|  Shadow approvals in Slack / email chains; no audit trail |  Deterministic interrupt‑approve‑resume hooks with provenance   |
+|  Ops teams forced to trust a black‑box agent              |  Clear UX surfaces show context, planned actions, and rollbacks |
+|  Regulatory or safety reviews become blockers             |  Built‑in checkpoints & diff views simplify certification       |
 
-Agent flows must allow for:
+---
 
-* Pausing execution at checkpoints
-* Requiring human approval or correction
-* Resuming without breaking state or flow
+## Canonical Inputs & Outputs
 
-This requires deterministic state, modular control, and robust execution tracing.
+| Item                                      | Format                             | Source / Destination         |
+| ----------------------------------------- | ---------------------------------- | ---------------------------- |
+| **In**  `StateSnapshot`, execution events | Pydantic / dataclass streams       | State & Execution layers     |
+| **Out** `HumanAction`                     | approve · reject · amend · comment | Back to Execution / Behavior |
 
-### 🧠 Role-Aware UX Callbacks
+```mermaid
+flowchart TD
+    SS(State Snapshot) --> CL(Collab UI)
+    EP(Exec Event) --> CL
+    CL -->|approve/amend| EX(Execution)
+    CL -->|feedback| BH(Behavior)
+```
 
-Different users need different interfaces:
+---
 
-* Operators, experts, supervisors, and analysts each interact with the system differently.
-* Responses, context, and interfaces must adapt based on roles and responsibility.
+## Core Responsibilities
 
-Think: "Approval required by a field supervisor" vs. "FYI for a project manager."
+### 🛑 Interrupt / Approve / Resume
 
-### 🧰 Operator-Grade Workflows
+* Checkpoints in `ExecutionPlan` declare `requires_approval: true`.
+* UI surfaces plan diff, risk score, and "Approve / Reject / Edit" buttons.
+* Upon approval, Execution layer continues with preserved `StateSnapshot`.
 
-Forget demo chatbots—design for operators:
+### 🎚️ Role‑Aware UX Callbacks
 
-* Task queueing, escalation paths, and audit trails
-* Slack, voice, email, or native UI integration
-* Interfaces optimized for attention, not entertainment
+* **Operators** → real‑time alerts, quick approve/reject.
+* **Domain Experts** → rich diff view with inline edits.
+* **Auditors** → read‑only log explorer + export.
 
-Agents must fit *into* the workflow, not force new ones.
+### 📝 Audit & Compliance
 
-## Why It Matters
+* Every human action becomes a first‑class `HumanAction` record.
+* Linked to plan ID, step ID, user ID, timestamp.
+* Retained alongside Observability traces for post‑mortems.
 
-In production systems, autonomy is a privilege—not a starting point. Trust is earned through visibility, control, and collaboration. If a system can’t pause, explain itself, or be corrected, it won’t be used when it matters most.
+---
 
-## Summary
+## Principles Embodied
 
-Cognitive agents are collaborators. The best systems are designed to fit seamlessly into expert workflows—augmenting, not replacing, human intelligence.
+* **Human Collaboration by Design** – interruption and override are features, not failures.
+* **Observable Everything** – human decisions are logged just like agent decisions.
+* **Composable Error Handling** – rejection can route to Behavior layer for replanning or fallback.
 
-> "True intelligence isn’t autonomy—it’s collaboration."
+---
 
+## Production Checklist
+
+* [ ] SLA for approval timeouts (auto‑fail or auto‑pass after X mins).
+* [ ] RBAC enforcement on who can approve which tool classes.
+* [ ] UX copy localization + accessibility audit.
+* [ ] Webhook / message queues hardened for lost‑connection retries.
+* [ ] Metrics: *approval‑to‑reject ratio*, *mean time to approve*, *manual‑override rate*.
+
+---
+
+> *“Autonomy is earned.  Collaboration is designed.”*

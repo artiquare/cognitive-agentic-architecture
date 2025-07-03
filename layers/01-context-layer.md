@@ -1,46 +1,79 @@
-# Layer 1: Context Layer
+# Layer 1 – Context
 
-**Cognitive Agentic Architecture — Layer 1 of 5**
+> **Mission ‑ Turn raw inputs into a typed, versioned *ContextObject*.**
 
-Agentic systems begin with context—but not in the form of brittle prompt strings or ad hoc memory hacks. A robust context layer provides a structured, semantic, and versioned representation of all relevant information.
+Everything an agent decides (and later does) starts with an accurate, structured understanding of the situation. The Context layer is that understanding. It owns *nothing else*: no planning, no tool calls, no side‑effects.
 
-- **Purpose**: This is the core logic layer where decisions are made. It consumes State and triggers Execution.
-- **Components**: Context builders (the "what am I looking at?"), behavior routing (the "what should I do next?"), prompt dispatching, task combination, and workflow logic (loops, conditions).
-- **Principle Embodied**: Small, Focused Agents, Explicit Control Flow, Prompt = Code.
-- Typed, structured, and versioned inputs  
-- Ontology-driven interpretation  
-- Short-term memory, long-term memory, and overlays  
+---
 
-## Core Responsibilities
+## Why a Dedicated Context Layer?
 
-### ✅ Typed Input Schemas
+| Pain if missing                         | Benefit of separation                  |
+| --------------------------------------- | -------------------------------------- |
+| Prompt spaghetti & hidden string concat | Typed schemas → validation & reuse     |
+| Different teams mutate prompts ad‑hoc   | Version‑controlled context builders    |
+| Hard to unit‑test “what the agent saw”  | Deterministic `ContextObject` snapshot |
 
-Context starts with clear expectations. All inputs must follow defined schemas, allowing for validation, interpretation, and version control. No raw strings, no guesswork.
+---
 
-### 🧱 Composable Prompt Modules
+## Canonical Inputs & Outputs
 
-Context isn’t monolithic. Break prompts into modular, reusable blocks: role descriptions, task intents, memory snippets, and tool usage guides. Each piece is versioned and testable.
+| Item                                                | Format               | Notes                           |
+| --------------------------------------------------- | -------------------- | ------------------------------- |
+| **In**  Raw user text, events, db rows, sensor data | Any                  | Gathered by adapters / gateways |
+| **Out** `ContextObject`                             | Pydantic / dataclass | Passes to Behavior layer        |
 
-### 🧠 Ontology-Driven Roles & Intents
+```python
+class ContextObject(BaseModel):
+    user_intent: str            # e.g. "open_ticket"
+    entities:   dict[str, Any]  # extracted IDs, dates, etc.
+    short_mem:  list[str]       # last‑turn tool results
+    long_mem:   list[str]       # persisted domain facts
+    meta:       dict[str, Any]  # version, locale, model hints
+```
 
-Agents operate more reliably when their context is semantically aligned with the domain. Use an ontology to define roles, intents, and domain-specific structures. This creates a shared language between humans, agents, and systems.
+---
 
-### 🧬 Memory & Overlays
+## Building Context – Core Responsibilities
 
-Split memory into short-term (scratchpad, last tool result, thread context) and long-term (domain knowledge, historical logs, entity state). Overlay additional layers for user personalization or session-specific overrides.
+### 1️⃣ Typed Input Schemas
 
-## Why It Matters
+* Every adapter (Slack, API webhook, IoT stream) maps raw payloads → strongly‑typed fields.
+* **Fail‑fast** if validation errors; feed errors to Observability for alerting.
 
-Unstructured context is a bottleneck for scaling agent intelligence. It leads to:
+### 2️⃣ Semantic Enrichment
 
-* Prompt bloat
-* Inconsistent behavior
-* Debugging nightmares
+* Entity extraction, ontology mapping, unit normalization.
+* Example: “next Tuesday” → ISO date; “press 42 bar” → `{pressure: 4.2 MPa}`.
 
-A real context layer turns context into software: structured, typed, and version-controlled.
+### 3️⃣ Memory Overlays
 
-## Summary
+* **Short‑term scratchpad**: last tool output, running notes.
+* **Long‑term memory**: domain facts, SOP links, previous tickets.
+* Overlay user‑specific or session‑specific layers without mutating ground truth.
 
-**Good context isn’t a prompt. It’s a data structure.**
+### 4️⃣ Versioning & Diff
 
-Design your agents to reason over structured context the same way you’d build any other intelligent system—with clarity, composability, and traceability.
+* Each `ContextObject` carries a `context_version` GUID.
+* Diffs between versions are logged → enables deterministic replay.
+
+---
+
+## Principles Embodied
+
+* **Context is Typed & Structured** – No raw strings.
+* **Prompt ≠ Context** – Prompting happens in Behavior; Context just **stores facts**.
+* **Observable Everything** – Context snapshots are first‑class artefacts for debugging.
+
+---
+
+## Checklist for Production
+
+* [ ] JSON‑schema / Pydantic validation on every input.
+* [ ] Ontology registry kept in version control.
+* [ ] Unit tests covering edge inputs & locale variants.
+* [ ] Telemetry: context size, entity extraction accuracy, validation error rate.
+
+---
+
+> *“If the inputs are a mystery, the outputs will be a surprise.”*

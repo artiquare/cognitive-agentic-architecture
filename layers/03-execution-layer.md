@@ -1,56 +1,91 @@
-# Execution Layer
+# Layer 3 – Execution / Actuator
 
-**Layer 2 of the Arti Agent Stack: Cognitive Agentic Architecture**
+> **Mission ‑ Turn an `ExecutionPlan` into real‑world side‑effects, safely.**
 
-The Execution Layer is where an agent’s behavior actually happens. It is the backbone of action within agentic systems, transforming structured inputs and defined context into observable outputs and outcomes — with full determinism and traceability.
+The Execution layer is the system’s "engine room." It consumes a validated **`ExecutionPlan`** from the Behavior layer and performs each step via typed tool contracts. No planning happens here – only **acting, retrying, and reporting results**.
 
-- **Purpose**: To interact with the outside world. This is the lowest level of the stack.
-- **Components**: Typed API wrappers for tools, secure LLM/LMM call handlers, external system interfaces.
-- **Principle Embodied**: Tools as Contracts, (Python) code execution.
-- Tool contracts and typed APIs  
-- Prompt dispatching and behavior routing  
-- Retry, fallback, and tool orchestration  
+---
 
-## Key Characteristics
+## Why isolate Execution?
 
-### 🧩 Typed Tools and Interfaces
+| Pain if merged with planning                      | Benefit of separation                   |
+| ------------------------------------------------- | --------------------------------------- |
+|  LLM prompts mix “think” & “do” → silent failures |  Deterministic, auditable actions       |
+|  Tool wrappers littered with business rules       |  Pure adapters; easier to stub & test   |
+|  Hard to add retry/back‑off without prompt hacks  |  Centralised resilience pattern library |
 
-All tools are invoked via explicit, typed interfaces. No arbitrary string-based payloads or unstructured calls.
+---
 
-* Each tool contract includes input/output schemas
-* Enforced with runtime validation and test coverage
-* Enables deterministic behavior and guards against silent failure
+## Canonical Inputs & Outputs
 
-### 🧠 Behavior Routing (Mixture of Experts)
+| Item                    | Format               | Source / Destination |
+| ----------------------- | -------------------- | -------------------- |
+| **In**  `ExecutionPlan` | Pydantic / dataclass | Layer 2 (Behavior)   |
+| **Out** `StateChange`   | Pydantic / dataclass | Layer 4 (State)      |
 
-Leverage modular agents or logic blocks chosen at runtime based on intent, role, or confidence.
+```mermaid
+flowchart LR
+    B(ExecutionPlan) --> E(Execution / Actuator)
+    E --> SC(StateChange)
+```
 
-* Intent-based dispatching (e.g., classify → route)
-* Supports parallel expert agents for specialized sub-tasks
-* Reduces prompt complexity and increases modularity
+`StateChange` example:
 
-### 🚀 Prompt Dispatching & Overloading
+```jsonc
+{
+  "plan_id": "uuid",
+  "step_id": "1",
+  "status": "success",
+  "output": {"found": true, "customer_name": "Anna"},
+  "timestamp": "2025-07-03T10:15:00Z"
+}
+```
 
-Agents can dynamically select or overload prompts based on the current context or task type.
+---
 
-* Parameterized prompt templates
-* Versioned prompt sets for different behaviors
-* Supports fallback logic and layered prompting
+## Key Responsibilities
 
-### 🔁 Retry Logic, Interrupts, and Typed Side-Effects
+### 🧩 Typed Tool Contracts
 
-All actions are instrumented for resilience.
+* Every tool is a **strict interface** (`InputModel` → `OutputModel`).
+* Runtime validation; rejects unknown fields.
+* Enables compile‑time stubs & mocks.
 
-* Built-in retry and exponential backoff patterns
-* Human-interruptible steps with resumable context
-* Typed side-effects (logging, storage, notifications) to ensure predictability
+### 🚦 Retry / Back‑off / Circuit Breakers
 
-## Why It Matters
+* Configurable per‑step policies (`retry: 2`, `timeout: 8s`).
+* Standardised exponential back‑off helpers.
+* Escalate to Collaboration layer when retries exhausted.
 
-Most failures in agentic systems occur in the execution layer: ambiguous behavior, untraceable tool calls, or brittle flows. By making behavior explicit, typed, and observable, the execution layer ensures robust, modular, and auditable automation.
+### 🔀 Runtime Instrumentation
 
-> "LLMs may suggest actions, but execution must be treated as software — not a string-based dream."
+* Emit **`ExecutionEvent`** for every call (tool name, args hash, latency).
+* Forward to Observability bus (logs, traces, metrics).
 
-## Summary
+### 🛑 Interrupt & Resume
 
-The Execution Layer is where intelligence meets accountability. By enforcing strong contracts and explicit logic, it turns prompts into reliable outcomes — not just guesses.
+* Checks inbox for human “hold / resume” commands before executing next step.
+* Persist intermediate `StateSnapshot` to allow replay / rollback.
+
+---
+
+## Principles Embodied
+
+* **Tools as Contracts** – no free‑form strings, only typed adapters.
+* **Explicit Control Flow** – plan drives execution, not hidden inside prompts.
+* **Composable Error Handling** – retries, fallbacks, escalation paths are data‑driven.
+* **Observable Everything** – each tool call is a first‑class event.
+
+---
+
+## Checklist for Production
+
+* [ ] Tool registry with version tags & deprecation policy.
+* [ ] Unit tests for every adapter (mock external system).
+* [ ] Golden path integration test executing a full `ExecutionPlan`.
+* [ ] Latency & error‑rate SLOs exported via Observability layer.
+* [ ] Rollback script for side‑effects that must be reversible.
+
+---
+
+> *“Plans can be creative; execution must be **boringly predictable**.”*

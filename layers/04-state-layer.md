@@ -1,52 +1,77 @@
-# State Layer
+# Layer 4 – State
 
-**Layer 3 of the Arti Agent Stack: Cognitive Agentic Architecture**
+> **Mission ‑ Remember the world and the agent — in a way that’s testable, rewindable, and safe.**
 
-State is the backbone of agentic systems — it must be persistent, structured, and explicitly defined. Unlike traditional approaches where state is often hidden in fragile dictionaries or buried in memory blobs, the Cognitive Agentic Architecture mandates clear and testable state transitions.
+The State layer is the agent’s persistent memory. It captures every **`StateChange`** emitted by the Execution layer and materialises a canonical **`StateSnapshot`** that the next Context cycle can trust.
 
-- **Purpose**: To manage and persist the agent's understanding of the world and its own progress. It sits directly on top of the Execution Layer.
-- **Components**: Structured state contracts, persistent memory (short-term & long-term), checkpointing, and transaction management.
-- **Principle Embodied**: State is Explicit, Memory is Scoped.
-- Structured, persistent agent state  
-- Checkpoints, diffing, and time-aware transitions  
-- Separation between model state and external system state  
+---
 
-## Key Characteristics
+## Why make state explicit?
 
-### 🧠 Persistent, Structured Internal State
+| Pain if hidden in dicts / blobs           | Benefit of structured state                                       |
+| ----------------------------------------- | ----------------------------------------------------------------- |
+|  “Where did that variable come from?”     |  Typed schemas and versioning make provenance clear               |
+|  Hard to reproduce bugs / race‑conditions |  Snapshots & checkpoints enable deterministic replay              |
+|  Mixing agent belief with external truth  |  Model‑state vs. Environment‑state separation prevents corruption |
+|  Memory leaks & unbounded growth          |  Lifecycle policies (TTL, compaction) keep memory sane            |
 
-Agents should maintain well-defined internal state across executions:
+---
 
-* Use structured types (e.g. Pydantic models) instead of freeform dicts.
-* Avoid ephemeral or hard-to-debug memory constructs.
-* Persist state when needed to support resumability and collaboration.
+## Canonical Inputs & Outputs
+
+| Item                    | Format               | Source / Destination                 |
+| ----------------------- | -------------------- | ------------------------------------ |
+| **In**  `StateChange`   | Pydantic / dataclass | Layer 3 (Execution)                  |
+| **Out** `StateSnapshot` | Pydantic / dataclass | Layer 1 (Context) & Layer 5 (Collab) |
+
+```mermaid
+flowchart LR
+    Exec(StateChange) --> S[State Layer]
+    S --> Snap(StateSnapshot)
+    Snap --> Context
+    Snap --> Collab
+```
+
+---
+
+## Key Responsibilities
+
+### 🧩 Persistent, Structured Internal State
+
+* All fields defined via typed schemas (e.g. Pydantic models).
+* Version each schema – migrations must be explicit.
+* Persists to durable storage (SQL / KV / object) with ACID semantics.
 
 ### 🔄 Distinct Model vs. Environment State
 
-Separate concerns:
+* **Model‑state** = agent beliefs, intermediate variables, private notes.
+* **Environment‑state** = authoritative facts from external systems.
+* Clear boundary prevents an LLM hallucination from corrupting ground truth.
 
-* **Model State**: What the agent believes, tracks, and updates internally.
-* **Environment/User State**: Inputs, outputs, and effects from the external world.
-  This separation improves reasoning, debugging, and validation.
+### ⏮️ Checkpoints, Rewinds & Diffing
 
-### ⏮️ Checkpoints, Rewinds, and Transitions
+* Create a **checkpoint** before high‑risk sequences.
+* Allow **rewind** & replay for deterministic tests.
+* Emit deltas (`StateDiff`) so observers can subscribe to changes.
 
-Execution should support defined points of return and resumption:
+---
 
-* Save state before high-risk or complex operations.
-* Allow rewind and replay for deterministic testing.
-* Transitions between states should be typed and validated.
+## Principles Embodied
 
-## Why It Matters
+* **State is Explicit** – nothing hides in a dict.
+* **Memory is Scoped & Addressable** – short‑term vs long‑term TTLs.
+* **Composable Error Handling** – invalid state triggers typed recovery flows.
 
-Brittle memory and opaque state management lead to cascading failures, poor observability, and untrustworthy agents. To scale, agents must be able to:
+---
 
-* Restore known-good states.
-* Be debugged after errors.
-* Handle concurrent, complex workflows.
+## Production Checklist
 
-## Summary
+* [ ] Schema versioning & migration scripts.
+* [ ] Automated snapshot diff tests on every PR.
+* [ ] Time‑travel API for human operators.
+* [ ] TTL / retention policy for long‑term memory.
+* [ ] Metric: *snapshot\_size*, *snapshot\_latency*, *invalid\_state\_rate*.
 
-State is not an implementation detail — it’s a core abstraction. Cognitive agents must treat state as a first-class citizen: observable, testable, and persistable.
+---
 
-> "If you can't see it, test it, or restore it, it's not real state."
+> “If you can’t see it, test it, or restore it, it’s not real state.”

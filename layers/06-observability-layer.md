@@ -1,65 +1,79 @@
-# Observability & Evaluation Layer
+# Observability & Evaluation (Cross‑Cutting Bus)
 
-**Layer 5 of the Arti Agent Stack: Cognitive Agentic Architecture**
+> **Mission ‑ If you can’t trace it, you can’t trust it.**
 
-You can’t trust what you can’t trace. The Observability & Evaluation Layer ensures every agent decision, action, and failure is inspectable — not just during development, but in real-world operations.
+The Observability bus is wired into every layer of CAA. It collects structured events, traces, and metrics so teams can debug, audit, and continually improve cognitive agents *in production*.
 
-- **Purpose**: A cross-cutting layer that provides insight into all other layers. It is not sequential but has hooks into Execution, State, and Behavior.
-- **Components**: Full trace capture, step introspection, evaluation hooks, runtime debugging, and semantic metrics.
-- **Principle Embodied**: Observable Everything, Composable Error Handling.
-- Full trace capture and step introspection  
-- Evaluation hooks and runtime debugging  
-- Replayability and semantic metrics  
+---
 
-## Key Characteristics
+## Why a cross‑cutting layer?
 
-### 🔍 Step-by-Step Execution Traces
+| Pain when observability is bolted on   | Benefit of built‑in bus                             |
+| -------------------------------------- | --------------------------------------------------- |
+|  Silent failures & ghost retries       |  Instant root‑cause with step‑level traces          |
+|  Dev vs prod drift – no parity         |  Same data shape for local replay & live ops        |
+|  Impossible to quantify business value |  Task‑level success, MTTR, & human‑override metrics |
 
-Agents must emit structured traces for every execution:
+---
 
-* Inputs, outputs, context windows
-* Tool calls, responses, and decision paths
-* Errors, fallbacks, retries
+## What is captured?
 
-This makes debugging, compliance, and optimization possible at scale.
+| Event type       | Source layer  | Example fields                                         |
+| ---------------- | ------------- | ------------------------------------------------------ |
+| **ContextTrace** | Context       | raw input, schema id, enrichments                      |
+| **PlanTrace**    | Behavior      | plan\_id, tool\_seq, planner\_model, latency           |
+| **ActionTrace**  | Execution     | step\_id, tool, args\_hash, retries, duration, outcome |
+| **StateTrace**   | State         | snapshot\_id, diff\_size, store\_latency               |
+| **CollabTrace**  | Collaboration | hitl\_user, action, decision, timestamp                |
 
-### 🔁 Replay + Introspection
+All traces share a **correlation‑id** so a single request forms a complete lineage graph.
 
-Support deterministic replay of past runs:
+```mermaid
+flowchart TD
+  subgraph Layers
+    C1[Context] -->|ContextTrace| OB((Obs Bus))
+    B1[Behavior] -->|PlanTrace| OB
+    E1[Execution] -->|ActionTrace| OB
+    S1[State] -->|StateTrace| OB
+    H1[Collab] -->|CollabTrace| OB
+  end
+  OB --> LOGS{{"Store / Stream"}}
+  OB --> MON[[Dashboards]]
+  OB --> REPLAY[[Deterministic Replay]]
+```
 
-* Restore exact inputs, state, and tool outputs
-* Introspect where things diverged from expected paths
-* Enable regression testing and behavior verification
+---
 
-Replays are a precondition for trust in agentic systems.
+## Replay & Introspection
 
-### 🧪 Eval Harnesses for Prompts & Tools
+* **Deterministic Replay API** – feed stored traces back into Context → … → State to reproduce behaviour exactly.
+* **Step‑level diff viewer** – compare planned vs executed steps.
+* **Prompt/Tool regression suite** – run historical traces against new code to catch drift.
 
-Every prompt and tool should be:
+---
 
-* Versioned and evaluated independently
-* Tested for regressions across input types and edge cases
-* Monitored continuously in production via synthetic probes or shadow evals
+## Evaluation Harnesses
 
-Think beyond one-shot benchmarks — focus on workflow integrity.
+* A/B or canary runs with shadow agents.
+* Synthetic probes for edge‑case prompts.
+* Business‑semantic KPIs (task success, approval latency, cost per workflow).
 
-### 📊 Semantic Metrics (Not Just Tokens)
+---
 
-Token counts are not enough. Measure what matters:
+## Principles Embodied
 
-* Task completion success
-* Error recovery rates
-* Time-to-resolution and collaboration frequency
-* Alignment with human judgment and business rules
+* **Observable Everything** – every object in the stack emits telemetry.
+* **Composable Error Handling** – failures propagate as typed events; monitoring hooks trigger escalate / retry policies.
 
-Build observability into the agent — not around it.
+---
 
-## Why It Matters
+## Production Checklist
 
-Most AI failures aren’t caused by models — they’re caused by systems that can’t be observed, debugged, or trusted under pressure. Without observability, you’re flying blind.
+* [ ] Unique correlation‑id per request.
+* [ ] Trace sampling & redaction policies for PII.
+* [ ] Dashboards for latency, success‑rate, human‑override‑rate.
+* [ ] Replay harness in CI to catch regressions.
 
-## Summary
+---
 
-The Cognitive Agentic Architecture closes the loop: agents must not only *act*, they must *explain* and *evolve*. Tracing and evaluation aren’t afterthoughts — they’re the foundation of operational trust.
-
-> "In the real world, observability isn’t a nice-to-have. It’s survival."
+> *“Telemetry is the contract between AI and operations.”*
