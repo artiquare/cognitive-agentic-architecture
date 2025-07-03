@@ -25,30 +25,26 @@ If you're building agents that need to survive contact with reality, start here.
 
 
 ```mermaid
-flowchart TB
-    subgraph LAYERS[" "]
-        direction TB
-        EXE["Execution<br>(Engine<br>Room)"]
-        STA["State<br>(System<br>Memory)"]
-        CON["Context<br>(Agent<br>Brain)"]
-        COL["Collaboration<br>(Human<br>Interface)"]
-        OBS[("Observability<br>Bus)"]
+%% Cognitive Agentic Architecture – data-flow view
+flowchart LR
+    %% Core loop
+    Context["Context<br>Layer"] --> Behavior["Behavior<br>Layer"]
+    Behavior --> Execution["Execution<br>Layer"]
+    Execution --> State["State<br>Layer"]
+    State -->|state_snapshot| Context
 
-        EXE -->|State&nbsp;Change| STA
-        STA -->|Snapshot| CON
-        CON -->|Exec&nbsp;Plan| EXE
-        EXE -.->|Events| COL
-        STA -.->|Snapshot| COL
+    %% Human collaboration (side-channel)
+    Execution -. tool_events .-> Collaboration["Collaboration<br>Layer"]
+    State -. snapshot .-> Collaboration
+    Collaboration -. feedback .-> Behavior
+    Collaboration -. override .-> Execution
 
-        %% cross-cutting taps
-        EXE -.-> OBS
-        STA -.-> OBS
-        CON -.-> OBS
-        COL -.-> OBS
-    end
-
-    classDef layer fill:#fafafa,stroke:#777,stroke-width:1px;
-    class EXE,STA,CON,COL layer;
+    %% Observability bus (cross-cutting)
+    Context -. ctx_trace .-> Obs["Observability<br>Bus"]
+    Behavior -. plan_trace .-> Obs
+    Execution -. act_trace .-> Obs
+    State -. state_trace .-> Obs
+    Collaboration -. collab_trace .-> Obs
 ```
 
 
