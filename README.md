@@ -24,6 +24,30 @@ CAA defines five layers that turn LLM reasoning into reliable execution.
 If you're building agents that need to survive contact with reality, start here. We’ve tested dozens of frameworks, shipped agent systems in production, and learned what works. This project distills that into a blueprint for real-world AI execution — not just chatbots and demos.
 
 
+```mermaid
+%% Cognitive Agentic Architecture – data-flow view
+flowchart LR
+    %% Core loop
+    Context["Context<br>Layer"] --> Behavior["Behavior<br>Layer"]
+    Behavior --> Execution["Execution<br>Layer"]
+    Execution --> State["State<br>Layer"]
+    State -->|state_snapshot| Context
+
+    %% Human collaboration (side-channel)
+    Execution -. tool_events .-> Collaboration["Collaboration<br>Layer"]
+    State -. snapshot .-> Collaboration
+    Collaboration -. feedback .-> Behavior
+    Collaboration -. override .-> Execution
+
+    %% Observability bus (cross-cutting)
+    Context -. ctx_trace .-> Obs["Observability<br>Bus"]
+    Behavior -. plan_trace .-> Obs
+    Execution -. act_trace .-> Obs
+    State -. state_trace .-> Obs
+    Collaboration -. collab_trace .-> Obs
+```
+
+
 ## Who Is This For?
 
 *   **For Leaders & Product Managers:** Start with our [Product Overview](./product_overview.md) to understand the business value.
