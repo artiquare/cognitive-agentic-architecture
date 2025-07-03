@@ -1,68 +1,66 @@
-# Principle: Structured Context
+# Principle – Structured Context
 
-**No string soup. Use typed inputs and versioned construction.**
+> **No string soup. Use typed inputs and versioned construction.**
 
-### Why It Matters
+---
 
-Agent systems break when context becomes a blob of concatenated strings with unclear boundaries. This "string soup" makes it:
+## Why It Matters
+Context that lives as a giant f‑string is a time‑bomb:
 
-* Impossible to debug
-* Hard to reuse
-* Fragile to small prompt changes
-* Difficult to reason about what the agent actually sees
+* 🔍 **Undebuggable** – you can’t tell which part of the soup broke.
+* ♻️ **Un‑reusable** – every new workflow copies & pastes more goo.
+* 🪢 **Brittle** – small wording changes ripple through hidden concat logic.
+* 🧠 **Opaque** – you never really know what the model *saw*.
 
-Structured context is the foundation of robust, testable, and maintainable agentic systems.
+**Structured context** turns that mush into software‑quality data.
 
-### What It Looks Like
+---
 
-Instead of feeding your agent a big prompt with hard-coded string concatenations, define context as typed data models with:
+## Core Ideas
 
-* **Clear input fields**: Defined via schemas (e.g., Pydantic models)
-* **Modular construction**: Composed from reusable prompt modules
-* **Explicit roles**: System/user/assistant/message types
-* **Version control**: Prompt modules are versioned and tracked like code
+| Raw Prompt Soup 🥣            | Structured Context 🧩                              |
+| ----------------------------- | -------------------------------------------------- |
+| `f"You are a bot. {history}"` | `ContextObject(history=list[Msg], user_query=str)` |
+| Mixed roles & data            | Clear system / user / tool message boundaries      |
+| Version hidden in comments    | Context builders are version‑controlled modules    |
+| Manual string ops             | Typed schemas (Pydantic / dataclass) + validators  |
 
-### Implementation Principles
+---
 
-* Treat context like an API contract: strict inputs, no surprises
-* Separate source data from prompt construction (e.g., don’t build prompts inside tools)
-* Normalize context sources: metadata, user history, state, memory should all be structured inputs
-* Build prompt construction pipelines: input -> structure -> template -> message
+## Implementation Guide
 
-### Antipatterns
-
-* `f"You are a helpful assistant. {history} {query}"`
-* Mixing retrieval, templating, and logic inline
-* Manually appending strings to build chat history
-
-### Examples
-
-**Bad:**
-
-```python
-prompt = f"""
-You are helping with a support issue.
-
-History:
-{ticket_history}
-
-Query:
-{user_query}
-"""
-```
-
-**Good:**
+1. **Define Schema First**  – Start every agent with a `ContextObject` class.
+2. **Modular Builders**      – Separate *source fetch* (e.g. RAG) from *prompt render*.
+3. **Version Everything**    – `support/v1`, `support/v2`; prompts are code, ship them as such.
+4. **Test in Isolation**     – Unit‑test context builders without invoking the LLM.
 
 ```python
 class SupportContext(BaseModel):
-    ticket_history: List[TicketEntry]
+    ticket: Ticket
+    history: list[Message]
     user_query: str
 
-support_prompt = prompt_builder.build("support/v1", SupportContext(...))
+ctx = build_support_context(ticket_id="T‑123", query=text)
+rendered = prompt_renderer.render("support/agent_v1", ctx)
 ```
 
-### Summary
+---
 
-Structured context is not an optimization. It's a requirement. Without it, you’re building black boxes held together by string formatting and hope.
+## Antipatterns to Avoid
 
-> Structure your context, or your context will structure your failures.
+* Inline concatenation inside business logic.
+* Relying on the LLM to *parse* raw JSON blobs embedded in messages.
+* Mixing tool descriptions and user history in the same section.
+
+---
+
+## Benefits
+
+* **Predictability** – Same inputs → same rendered prompt.
+* **Observability** – Traces show each field; diffs are meaningful.
+* **Composability** – Plug new memory or data sources without rewriting prompts.
+* **Governance** – Review & audit prompts like code; roll back bad versions fast.
+
+---
+
+> *“Structure your context, or your context will structure your failures.”*

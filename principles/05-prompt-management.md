@@ -1,37 +1,54 @@
-# Principle 5: Prompt = Code
+# Prompt = Code  (Principle 5)
 
-Prompts are not magic. They are system-critical components and must be treated as first-class code artifacts.
+> **Prompts are system‑critical ‑ treat them like code, not copy‑paste.**
 
-Too many agentic systems rely on fragile, copy-pasted prompt strings with no versioning, no testing, and no error handling. This breaks in production.
+Too many agentic systems rely on brittle, inline strings with no versioning, tests, or error‑handling. In production that’s a liability.
 
-**Our Principle:** Prompts are code. They must be:
+---
 
-* **Versioned**: Each change should be tracked, reviewable, and rollback-safe. Treat them like any other module in your system.
-* **Parameterized**: Use prompt templates with clearly defined variables. Never hardcode.
-* **Testable**: Every prompt should be covered by unit tests and runtime evaluations. Know how it behaves under different inputs.
-* **Fallback-safe**: Handle prompt failures gracefully. Define recovery behavior for unclear outputs or hallucinations.
+## Rule of Thumb
 
-### Why It Matters
+| Attribute         | Requirement                                                          |
+| ----------------- | -------------------------------------------------------------------- |
+| **Versioned**     | Every change tracked, reviewable & rollback‑safe                     |
+| **Parameterized** | Use templates + typed variables – never hard‑code values             |
+| **Testable**      | Unit tests & eval harnesses cover edge‑cases & regressions           |
+| **Fallback‑safe** | Graceful recovery when the LLM returns invalid JSON / low‑confidence |
 
-Prompts control agent behavior. They're part of the execution logic. If they fail, your system fails. Treating prompts as code makes behavior reproducible, testable, and improvable over time.
+## Why It Matters
 
-### Design Recommendations
+Prompts *control* behaviour. If they drift, your system drifts. Treating prompts as code makes behaviour **reproducible**, **auditable**, and **continuously improvable**.
 
-* Store prompts in dedicated files with schema and metadata.
-* Annotate inputs and expected outputs.
-* Write tests for edge cases and regressions.
-* Use a prompt registry to manage versions.
-* Link each prompt to specific tool interfaces and context expectations.
+## Implementation Checklist
 
-### Common Pitfalls
+1. **Separate files** – store prompts in their own repo path, not inline.
+2. **Schema annotation** – document inputs / outputs in the file header.
+3. **Prompt registry** – map `prompt_id` → file path → semantic version.
+4. **Automated tests** – snapshot tests, edge‑case fuzzing, schema validation.
+5. **Promotion workflow** – PR review → staging eval → prod rollout.
 
-* String concatenation without structure.
-* Inline prompts inside logic code.
-* Blind updates without regression testing.
-* No differentiation between similar prompt variants.
+```yaml
+# eg: prompts/support/respond_v1.yaml
+id: support/respond
+version: 1.2.0
+inputs:
+  - user_query: str
+  - ticket_context: TicketContext
+outputs: SupportResponse
+--- |
+You are SupportBot …
+{{ticket_context}}
+Question: {{user_query}}
+```
 
-### Real-World Analogy
+## Common Pitfalls
 
-If your backend logic lived in markdown files without version control, tests, or review — you wouldn't trust it. The same applies to prompts.
+* String concatenation: `f"You are… {history} {query}"`
+* Inline prompt edits during hot‑fixes, no tests → silent regressions.
+* One giant prompt that does context building, planning & execution.
 
-Agentic systems are only as stable as their weakest prompts. Make prompt management a discipline.
+## Real‑World Analogy
+
+If your backend logic lived in Markdown files with no version control, tests, or review — you’d never ship. Prompts deserve the same discipline.
+
+> *“An agent is only as stable as its weakest prompt. Ship prompts like you ship code.”*

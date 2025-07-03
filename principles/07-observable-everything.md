@@ -1,62 +1,77 @@
-# Principle 7: Observable Everything
+# Principle 7 – Observable Everything
 
-In production-grade agentic systems, visibility is non-negotiable. You must be able to **trace, debug, and explain every step** an agent takes. Without full observability, you're flying blind — and when things break, you won't know why.
+> **If you can’t trace it, you can’t trust it.**
 
-### Why This Matters
+Production‑grade agentic systems must expose **every decision, action, and failure**.  Full observability turns opaque AI behaviour into deterministic execution traces that operations teams can debug, audit and improve.
 
-LLM-based systems are inherently probabilistic. They can produce plausible responses that are subtly wrong. Without visibility into intermediate reasoning, context, and execution, debugging failures becomes guesswork.
+---
 
-Observability turns opaque AI behavior into **deterministic execution traces**. It enables:
+## Why It Matters
 
-* Root cause analysis
-* Quality control
-* Trust and explainability
-* Auditing and compliance
-* Iterative improvement
+LLM‑based agents are probabilistic. They often produce plausible yet subtly wrong outputs.  Without visibility into reasoning, context and execution you’re left guessing:
 
-### What You Need to Observe
+| Hidden Reality                    | Impact on Ops                     |
+| --------------------------------- | --------------------------------- |
+| Silent prompt regression          | Undetected quality drops          |
+| Tool time‑outs swallowed by loops | Latency spikes, runaway costs     |
+| Hallucinated state updates        | Data corruption & compliance risk |
 
-Every agent step must be inspectable. That includes:
+Observability provides:
 
-#### • What context it had
+* **Root‑cause analysis** – pinpoint which step failed.
+* **Quality control** – measure task‑level success, not token counts.
+* **Explainability** – show stakeholders *why* a result was produced.
+* **Audit & compliance** – immutable traces for regulators.
+* **Iterative improvement** – replay traces against new code or prompts.
 
-* The full structured, versioned context at the moment of execution
-* Memory state, prompt stack, and environmental parameters
+---
 
-#### • Why it chose a tool
+## What Must Be Observable?
 
-* The decision logic, reasoning trace, and tool selection process
-* Any fallback or retry paths it evaluated
+| Question                             | Example Data to Capture                       |
+| ------------------------------------ | --------------------------------------------- |
+| **What context did the agent have?** | Versioned context object, memory snapshot     |
+| **Why did it choose that tool?**     | Planner reasoning trace, tool registry lookup |
+| **What did it say vs. what it did?** | Raw LLM output, executed tool call & result   |
+| **Where did it fail?**               | Exception type, retry count, fallback path    |
 
-#### • What it said vs. what it did
+All events share a **correlation‑id** so a single request forms a complete lineage graph from input to final state.
 
-* The raw LLM output vs. the actual tool calls made
-* Execution deltas between intent and result
+---
 
-#### • Where it failed
+## Implementation Blueprint
 
-* Any exceptions, timeouts, tool errors, or invalid states
-* Which layer or step caused the failure
+* **Trace IDs & Span IDs** – propagate through every layer.
+* **Structured Logs** – emit JSON logs; avoid free‑text.
+* **Deterministic Replay** – re‑run any trace offline for debugging.
+* **Dashboards & Alerts** – task success‑rate, MTTR, human‑override frequency.
+* **Failure Taxonomy** – classify errors (tool, prompt, plan, state) for analytics.
 
-### Implementation Best Practices
+> "+1" rule: *Every new prompt or tool must emit at least one structured log entry.*
 
-* **Trace IDs**: Tag every agent run and step with a unique trace ID
-* **Structured logs**: Capture structured JSON logs for every major event
-* **Replayability**: Make it possible to re-run any trace deterministically
-* **Separation**: Log context, decisions, execution, and outputs separately
-* **Instrumentation hooks**: Allow for custom logging and monitoring at each layer
+---
 
-### Example Tools & Techniques
+## Tools & Ecosystem
 
-* Use tracing libraries like OpenTelemetry or Langfuse
-* Define a trace schema for all agentic actions
-* Build UIs or dashboards for trace inspection and root cause analysis
-* Hook into tracing for evaluation, scoring, and monitoring
+* **OpenTelemetry / Langfuse / Honeycomb** for distributed traces.
+* **Replayer harness** to feed stored traces back through Context→…→State.
+* **Eval pipelines** that score traces with LLM‑as‑judge or rule‑based metrics.
 
-### Summary
+---
 
-> If you can't observe it, you can't trust it.
+## Principles Embodied
 
-Observability isn't a debugging feature — it's a core design requirement for safe, reliable, and scalable agent systems.
+* **Observable Everything** – nothing runs without leaving a breadcrumb.
+* **Composable Error Handling** – failures propagate as typed events; monitoring hooks trigger retry / escalate flows.
 
-**Design your agents like you design software — with full introspection and deterministic traces.**
+---
+
+### Checklist
+
+* [ ] Structured trace for every layer event
+* [ ] Correlation‑id across the full request
+* [ ] Deterministic replay script
+* [ ] Alert on error rates & cost anomalies
+* [ ] KPI dashboard aligned to business success
+
+> *“Telemetry is the contract between AI and operations.”*
