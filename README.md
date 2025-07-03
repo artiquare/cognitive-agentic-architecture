@@ -24,6 +24,34 @@ CAA defines five layers that turn LLM reasoning into reliable execution.
 If you're building agents that need to survive contact with reality, start here. We’ve tested dozens of frameworks, shipped agent systems in production, and learned what works. This project distills that into a blueprint for real-world AI execution — not just chatbots and demos.
 
 
+```mermaid
+flowchart TB
+    subgraph LAYERS[" "]
+        direction TB
+        EXE[Execution<br/>(Engine Room)]
+        STA[State<br/>(System Memory)]
+        CON[Context<br/>(Agent Brain)]
+        COL[Collaboration<br/>(Human Interface)]
+        OBS[(Observability Bus)]
+
+        EXE -->|State&nbsp;Change| STA
+        STA -->|Snapshot| CON
+        CON -->|Exec&nbsp;Plan| EXE
+        EXE -.->|Events| COL
+        STA -.->|Snapshot| COL
+
+        %% cross-cutting taps
+        EXE -.-> OBS
+        STA -.-> OBS
+        CON -.-> OBS
+        COL -.-> OBS
+    end
+
+    classDef layer fill:#fafafa,stroke:#777,stroke-width:1px;
+    class EXE,STA,CON,COL layer;
+```
+
+
 ## Who Is This For?
 
 *   **For Leaders & Product Managers:** Start with our [Product Overview](./product_overview.md) to understand the business value.
