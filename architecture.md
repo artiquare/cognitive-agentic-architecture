@@ -1,40 +1,64 @@
 # 🏗️ The Cognitive Agentic Architecture (CAA) Stack
 
-CAA is a blueprint for production-grade agentic systems. It defines a logical stack where each layer has a clear role and a defined interface, ensuring separation of concerns, observability, and reliability.
+CAA is a blueprint for production‑grade agentic systems. Each layer owns a single concern, with typed interfaces between them. The result: systems that are modular, observable, and reliable.
 
 ```mermaid
 graph TD
-    subgraph "CAA Thought Cycle"
-        direction LR
+    %% === Core Thought Cycle ===
+    subgraph "Thought Cycle"
+      direction LR
+      START([External Event / User Input]) --> C[Context Layer]
+      C -- ContextObject --> B[Behavior Layer]
+      B -- ExecutionPlan --> E[Execution Layer]
+      E -- StateChange --> S[State Layer]
+      S -- StateSnapshot --> C
+    end
 
-        START(External Input / Event) --> C[Context Layer];
+    %% === Collaboration Hooks ===
+    subgraph "Collaboration"
+      direction TB
+      S -. StateSnapshot .-> COL[Collaboration Layer]
+      E -. Execution Events .-> COL
+      COL -. Human Feedback .-> B
+      COL -. Human Override .-> E
+    end
 
-        subgraph "Core Agent Loop"
-            direction TB
-            C -- "ContextObject" --> B[Behavior Layer];
-            B -- "ExecutionPlan" --> E[Execution Layer];
-            E -- "StateChange" --> S[State Layer];
-        end
-
-        S -- "StateSnapshot" --> C;
-        S -- "StateSnapshot" --> COL[Collaboration Layer];
-
-        E -- "Execution Events" --> COL;
-
-        COL -- "Human Feedback / Approval" --> B;
-        COL -- "Human Override" --> E;
-
-        subgraph "Telemetry Bus"
-          C -- "Trace" --> O((Observability));
-          B -- "Trace" --> O;
-          E -- "Trace" --> O;
-          S -- "Trace" --> O;
-          COL -- "Trace" --> O;
-        end
+    %% === Observability Bus ===
+    subgraph "Telemetry Bus"
+      direction TB
+      C -- trace --> O((Observability))
+      B -- trace --> O
+      E -- trace --> O
+      S -- trace --> O
+      COL -- trace --> O
     end
 ```
 
-Context → Behavior → Execution → State → Collab + Obs.
+**Data Flow (Left ➜ Right):**
+
+1. **Context Layer** – Normalizes raw input → `ContextObject` (typed).
+2. **Behavior Layer** – Plans next step(s) → `ExecutionPlan`.
+3. **Execution Layer** – Executes plan, calls tools → `StateChange`.
+4. **State Layer** – Persists & versions state → `StateSnapshot`.
+5. **Cycle** repeats until goal met or human intervenes.
+
+*Collaboration* hooks run in parallel, while **Observability** taps every edge to provide full traces for replay & evaluation.
+
+---
+
+## Layer Cheat‑Sheet
+
+| # | Layer         | Owns                             | Key Artifact    |
+| - | ------------- | -------------------------------- | --------------- |
+| 1 | Context       | Input preprocessing & enrichment | `ContextObject` |
+| 2 | Behavior      | Planning & routing               | `ExecutionPlan` |
+| 3 | Execution     | Deterministic action             | `StateChange`   |
+| 4 | State         | Persistent memory & checkpoints  | `StateSnapshot` |
+| 5 | Collaboration | Human interaction & approvals    | UX events       |
+| ↺ | Observability | Tracing & metrics                | `TraceEvent`    |
+
+> **Separation of Concerns** gives you determinism; **Observability** gives you trust. Together they turn LLM reasoning into production‑grade execution.
+
 
 ## The 5-Layer Stack
 
