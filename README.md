@@ -28,10 +28,10 @@ If you're building agents that need to survive contact with reality, start here.
 flowchart TB
     subgraph LAYERS[" "]
         direction TB
-        EXE[Execution<br/>(Engine Room)]
-        STA[State<br/>(System Memory)]
-        CON[Context<br/>(Agent Brain)]
-        COL[Collaboration<br/>(Human Interface)]
+        EXE[Execution (Engine Room)]
+        STA[State (System Memory)]
+        CON[Context (Agent Brain)]
+        COL[Collaboration (Human Interface)]
         OBS[(Observability Bus)]
 
         EXE -->|State&nbsp;Change| STA
