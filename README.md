@@ -28,11 +28,11 @@ If you're building agents that need to survive contact with reality, start here.
 flowchart TB
     subgraph LAYERS[" "]
         direction TB
-        EXE[Execution<br>(Engine<br>Room)]
-        STA[State<br>(System<br>Memory)]
-        CON[Context<br>(Agent<br>Brain)]
-        COL[Collaboration<br>(Human<br>Interface)]
-        OBS[(Observability<br>Bus)]
+        EXE["Execution<br>(Engine<br>Room)"]
+        STA["State<br>(System<br>Memory)"]
+        CON["Context<br>(Agent<br>Brain)"]
+        COL["Collaboration<br>(Human<br>Interface)"]
+        OBS[("Observability<br>Bus)"]
 
         EXE -->|State&nbsp;Change| STA
         STA -->|Snapshot| CON
