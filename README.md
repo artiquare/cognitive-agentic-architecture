@@ -26,6 +26,7 @@ CAA defines five layers that turn LLM reasoning into reliable execution.
 
 If you're building agents that need to survive contact with reality, start here. We’ve tested dozens of frameworks, shipped agent systems in production, and learned what works. This project distills that into a blueprint for real-world AI execution — not just chatbots and demos.
 
+Overview
 
 ```mermaid
 %% Cognitive Agentic Architecture – data-flow view
@@ -50,6 +51,47 @@ flowchart LR
     Collaboration -. collab_trace .-> Obs
 ```
 
+
+Complete diagram with cross-cutting and lifecycle layers
+
+```mermaid
+%% Cognitive Agent Architecture (CAA) – extended with Security & Learning
+flowchart LR
+    %% Core loop
+    Context["Context<br>Layer"] --> Behavior["Behavior<br>Layer"]
+    Behavior --> Execution["Execution<br>Layer"]
+    Execution --> State["State<br>Layer"]
+    State -->|state_snapshot| Context
+
+    %% Human collaboration (side-channel)
+    Execution -. tool_events .-> Collaboration["Collaboration<br>Layer"]
+    State -. snapshot .-> Collaboration
+    Collaboration -. feedback .-> Behavior
+    Collaboration -. override .-> Execution
+
+    %% Observability bus (cross-cutting)
+    Context -. ctx_trace .-> Obs["Observability<br>Bus"]
+    Behavior -. plan_trace .-> Obs
+    Execution -. act_trace .-> Obs
+    State -. state_trace .-> Obs
+    Collaboration -. collab_trace .-> Obs
+
+    %% Learning loop (lifecycle)
+    Obs -. insights .-> Learning["Learning & Adaptation"]
+    State -. history .-> Learning
+    Learning -. model_updates .-> Context
+
+    %% Security (envelope)
+    subgraph Security["Security (Cross-Cutting)"]
+        Context
+        Behavior
+        Execution
+        State
+        Collaboration
+        Obs
+        Learning
+    end
+```
 
 ## Who Is This For?
 
