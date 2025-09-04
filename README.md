@@ -16,10 +16,13 @@ CAA defines five layers that turn LLM reasoning into reliable execution.
 | Layer | Solves | Delivers |
 |-------|--------|----------|
 | **Context** | AI doesn’t get intent | Typed, versioned context |
+| **Behavior** | Reasoning is hidden | Explicit, inspectable plans |
 | **Execution** | Chats but no action | Deterministic workflows & tool calls |
 | **State** | AI forgets | Persistent, testable memory |
 | **Collaboration** | No trust / approvals | Human-in-loop hooks |
-| **Observability** | Opaque failures | Full tracing & metrics |
+| **Observability** (cross-cutting)| Opaque failures | Full tracing & metrics |
+| **Security** (cross-cutting) | Risk & compliance gaps | Auth, isolation, governance |
+| **Learning & Adaptation** (lifecycle) | Systems decay | Continuous improvement loop |
 
 If you're building agents that need to survive contact with reality, start here. We’ve tested dozens of frameworks, shipped agent systems in production, and learned what works. This project distills that into a blueprint for real-world AI execution — not just chatbots and demos.
 
@@ -74,9 +77,13 @@ CAA is not just a list of ideas; it's a structured, 5-layer stack designed for p
 *   [**Layer 4: State**](./layers/04-state-layer.md)** - The persistent memory that tracks the agent's progress and enables multi-step, resumable workflows.
 *   [**Layer 5: Collaboration**](./layers/05-collaboration-layer.md)** - The interface that puts humans in the loop for approvals, oversight, and safe operations.
 
-Plus, a cross-cutting concern that touches every layer:
+Plus, 2 cross-cutting concern that touches every layer:
 
 *   [**The Observability Bus**](./layers/06-observability-layer.md) - Provides the full tracing, metrics, and debugging capabilities required to trust the system in production.
+*   **Security** - Authentication, isolation, compliance, governance.
+
+and a Lifecylce concern:
+*   **Learning & Adaptation** - Continuous improvement from feedback, monitoring, and retraining.
 
 
 ## 🔷 Cognitive Agentic Architecture (CAA)
@@ -90,7 +97,14 @@ In a world full of fragile demos and prompt loops, CAA sets the architectural fo
 
 The **Arti Agent Stack** is our opinionated implementation of CAA — forged through real-world deployment in high-stakes environments.
 
-Built to survive the complexity of enterprise operations, Arti is not just a wrapper around LLM calls. It’s a full-stack execution environment for cognitive agents, with first-class support for versioning, observability, and human oversight.
+It is one way to implement the blueprint — not the only way.
+
+*  Arti provides:
+*  First-class support for context versioning
+*  Deterministic execution with retries and validation
+*  State persistence for long-running workflows
+*  Human-in-loop hooks for approvals and escalations
+*  Observability baked in (tracing, metrics, dashboards)
 
 
 
